@@ -1,6 +1,6 @@
 # @artemsemkin/vite-plugin-wp-headers
 
-Vite plugin that calls a `generate` function on build start and watches specified files for changes during dev. Designed for WordPress header generation but works with any file-generation workflow.
+Vite plugin that automates file generation during the build lifecycle. Runs a callback on every build start and re-runs it when watched files change during dev — no manual scripts, no forgotten rebuilds.
 
 ## Install
 
@@ -10,7 +10,14 @@ npm install @artemsemkin/vite-plugin-wp-headers -D
 
 ## Why
 
-WordPress themes and plugins need generated header comments in `style.css` and PHP files. These headers should regenerate on every build start and whenever source data (like `package.json`) changes during development. This plugin handles the Vite lifecycle timing — you provide the generation logic.
+Build systems often need to generate or update files before bundling starts — WordPress header comments from `package.json`, version stamps, license blocks, etc. Without automation, you either forget to regenerate or add a manual pre-build step that breaks when someone skips it.
+
+This plugin hooks into Vite's lifecycle so generation happens automatically:
+- On every `vite build` invocation
+- On dev server startup
+- On every change to watched source files during dev
+
+You provide the generation logic. The plugin handles when it runs.
 
 ## API
 
@@ -21,21 +28,24 @@ wpHeaders({
 }): Plugin
 ```
 
-## Usage
+## Examples
 
-### With `@artemsemkin/wp-headers`
+### WordPress headers from `package.json`
+
+Pair with [`@artemsemkin/wp-headers`](https://www.npmjs.com/package/@artemsemkin/wp-headers) to generate `style.css` headers, plugin PHP headers, and `readme.txt` blocks from `package.json` data:
 
 ```ts
+// vite.config.ts
 import { resolve } from 'node:path'
 import { processMapping } from '@artemsemkin/wp-headers'
 import { wpHeaders } from '@artemsemkin/vite-plugin-wp-headers'
 
+const themeDir = resolve(__dirname, 'themes/flavor')
+const pluginDir = resolve(__dirname, 'plugins/flavor-core')
+
 const mappings = [
-  {
-    type: 'theme',
-    slug: 'my-theme',
-    entityDir: resolve(__dirname, 'themes/my-theme'),
-  },
+  { type: 'theme', slug: 'flavor', entityDir: themeDir, tgmBasePath: resolve(themeDir, 'src/php') },
+  { type: 'plugin', slug: 'flavor-core', entityDir: pluginDir, tgmBasePath: resolve(themeDir, 'src/php') },
 ]
 
 export default {
@@ -52,18 +62,22 @@ export default {
 }
 ```
 
-### Standalone
+Change any `package.json` version field during dev → headers regenerate instantly.
+
+### Any file generation
+
+Works with any generation logic — not limited to WordPress:
 
 ```ts
+import { writeFileSync } from 'node:fs'
 import { wpHeaders } from '@artemsemkin/vite-plugin-wp-headers'
 
 export default {
   plugins: [
     wpHeaders({
       generate() {
-        // any file-generation logic
+        writeFileSync('src/version.ts', `export const VERSION = '${Date.now()}'`)
       },
-      watch: ['/absolute/path/to/source.json'],
     }),
   ],
 }
