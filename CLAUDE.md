@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Vite plugin wrapper for `@artemsemkin/wp-headers`. Runs `processMapping()` on `configResolved` and watches `package.json` changes during dev server.
+Generic Vite plugin that calls a user-provided `generate()` function at build start and on file changes during dev. No dependency on `@artemsemkin/wp-headers` — composition happens in the consumer's build config.
 
 ## Commands
 
@@ -10,4 +10,4 @@ pnpm build   # tsc -p tsconfig.build.json -> dist/
 
 ## Architecture
 
-Single file: `src/index.ts`. Exports `wpHeaders(mappings): Plugin` and re-exports `HeaderMapping` type from `@artemsemkin/wp-headers`.
+Single file: `src/index.ts`. Exports `wpHeaders(options): Plugin` where options are `{ generate(), watch? }`.

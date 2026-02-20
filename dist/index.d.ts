@@ -1,8 +1,8 @@
 import type { Plugin } from 'vite';
-import type { HeaderMapping } from '@artemsemkin/wp-headers';
-export type { HeaderMapping };
-/**
- * Vite plugin that generates WordPress file headers (style.css, plugin PHP)
- * and patches TGM version entries on build and during dev server.
- */
-export declare function wpHeaders(mappings: HeaderMapping[]): Plugin;
+export interface WpHeadersOptions {
+    /** Called on build start and when watched files change */
+    generate(): void;
+    /** Absolute paths to watch during dev */
+    watch?: string[];
+}
+export declare function wpHeaders(options: WpHeadersOptions): Plugin;

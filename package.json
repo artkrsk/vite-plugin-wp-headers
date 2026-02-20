@@ -1,7 +1,7 @@
 {
   "name": "@artemsemkin/vite-plugin-wp-headers",
-  "version": "1.0.0",
-  "description": "Vite plugin for WordPress file header generation",
+  "version": "2.0.0",
+  "description": "Vite plugin that calls a generate function on build start and watches files during dev",
   "license": "MIT",
   "author": "Artem Semkin",
   "repository": {
@@ -34,9 +34,6 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "prepublishOnly": "pnpm build"
-  },
-  "dependencies": {
-    "@artemsemkin/wp-headers": "^1.1.0"
   },
   "peerDependencies": {
     "vite": ">=5"

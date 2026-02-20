@@ -1,6 +1,6 @@
 # @artemsemkin/vite-plugin-wp-headers
 
-Vite plugin that generates WordPress file headers from `package.json` data. Wraps [`@artemsemkin/wp-headers`](https://github.com/artkrsk/wp-headers).
+Vite plugin that calls a `generate` function on build start and watches specified files for changes during dev. Designed for WordPress header generation but works with any file-generation workflow.
 
 ## Install
 
@@ -8,24 +8,69 @@ Vite plugin that generates WordPress file headers from `package.json` data. Wrap
 npm install @artemsemkin/vite-plugin-wp-headers -D
 ```
 
-## Usage
+## Why
+
+WordPress themes and plugins need generated header comments in `style.css` and PHP files. These headers should regenerate on every build start and whenever source data (like `package.json`) changes during development. This plugin handles the Vite lifecycle timing — you provide the generation logic.
+
+## API
 
 ```ts
-// vite.config.ts
+wpHeaders({
+  generate(): void    // called on build start + file changes during dev
+  watch?: string[]    // absolute paths to watch during dev server
+}): Plugin
+```
+
+## Usage
+
+### With `@artemsemkin/wp-headers`
+
+```ts
+import { resolve } from 'node:path'
+import { processMapping } from '@artemsemkin/wp-headers'
 import { wpHeaders } from '@artemsemkin/vite-plugin-wp-headers'
+
+const mappings = [
+  {
+    type: 'theme',
+    slug: 'my-theme',
+    entityDir: resolve(__dirname, 'themes/my-theme'),
+  },
+]
 
 export default {
   plugins: [
-    wpHeaders([
-      {
-        type: 'theme',
-        slug: 'my-theme',
-        entityDir: 'themes/my-theme',
-        tgmBasePath: 'themes/my-theme/src/php',
+    wpHeaders({
+      generate() {
+        for (const m of mappings) {
+          processMapping(m)
+        }
       },
-    ]),
+      watch: mappings.map((m) => resolve(m.entityDir, 'package.json')),
+    }),
   ],
 }
 ```
 
-Runs on `configResolved` (build + dev) and watches `package.json` changes during dev.
+### Standalone
+
+```ts
+import { wpHeaders } from '@artemsemkin/vite-plugin-wp-headers'
+
+export default {
+  plugins: [
+    wpHeaders({
+      generate() {
+        // any file-generation logic
+      },
+      watch: ['/absolute/path/to/source.json'],
+    }),
+  ],
+}
+```
+
+## Behavior
+
+- **Build**: `generate()` runs once during `configResolved`
+- **Dev server**: `generate()` runs on startup, then again whenever a watched file changes
+- Errors during dev are logged via Vite's logger (won't crash the server)

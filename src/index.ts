@@ -1,39 +1,37 @@
-import { resolve } from 'node:path'
 import type { Plugin } from 'vite'
-import { processMapping } from '@artemsemkin/wp-headers'
-import type { HeaderMapping } from '@artemsemkin/wp-headers'
 
-export type { HeaderMapping }
+export interface WpHeadersOptions {
+  /** Called on build start and when watched files change */
+  generate(): void
+  /** Absolute paths to watch during dev */
+  watch?: string[]
+}
 
-/**
- * Vite plugin that generates WordPress file headers (style.css, plugin PHP)
- * and patches TGM version entries on build and during dev server.
- */
-export function wpHeaders(mappings: HeaderMapping[]): Plugin {
+export function wpHeaders(options: WpHeadersOptions): Plugin {
   return {
     name: 'vite-plugin-wp-headers',
 
     configResolved() {
-      for (const mapping of mappings) {
-        processMapping(mapping)
-      }
+      options.generate()
     },
 
     configureServer(server) {
-      for (const mapping of mappings) {
-        const pkgPath = resolve(mapping.entityDir, 'package.json')
-        server.watcher.add(pkgPath)
-        server.watcher.on('change', (filePath: string) => {
-          if (filePath !== pkgPath) {
-            return
-          }
-          try {
-            processMapping(mapping)
-          } catch (err) {
-            server.config.logger.error(String(err))
-          }
-        })
+      if (!options.watch?.length) {
+        return
       }
+      for (const filePath of options.watch) {
+        server.watcher.add(filePath)
+      }
+      server.watcher.on('change', (changedPath: string) => {
+        if (!options.watch!.includes(changedPath)) {
+          return
+        }
+        try {
+          options.generate()
+        } catch (err) {
+          server.config.logger.error(String(err))
+        }
+      })
     },
   }
 }

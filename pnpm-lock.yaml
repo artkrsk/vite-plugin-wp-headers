@@ -7,10 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      '@artemsemkin/wp-headers':
-        specifier: ^1.1.0
-        version: 1.1.0
     devDependencies:
       '@types/node':
         specifier: ^25.3.0
@@ -23,9 +19,6 @@ importers:
         version: 7.3.1(@types/node@25.3.0)
 
 packages:
-
-  '@artemsemkin/wp-headers@1.1.0':
-    resolution: {integrity: sha512-nVXsy+sSgii5/RfLVv+ujNmNRcmb7zq6hbBktatMgS+MxnNcbH+473OY1HCNPUWfup8qzPJBbYNYR3zpROI3iQ==}
 
   '@esbuild/aix-ppc64@0.27.3':
     resolution: {integrity: sha512-9fJMTNFTWZMh5qwrBItuziu834eOCUcEqymSH7pY+zoMVEZg3gcPuBNxH1EvfVYe9h0x/Ptw8KBzv7qxb7l8dg==}
@@ -424,8 +417,6 @@ packages:
         optional: true
 
 snapshots:
-
-  '@artemsemkin/wp-headers@1.1.0': {}
 
   '@esbuild/aix-ppc64@0.27.3':
     optional: true
