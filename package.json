@@ -1,7 +1,7 @@
 {
   "name": "@artemsemkin/vite-plugin-wp-headers",
-  "version": "2.0.1",
-  "description": "Vite plugin that calls a generate function on build start and watches files during dev",
+  "version": "2.0.2",
+  "description": "Vite plugin for automatic WordPress header generation during build and dev",
   "license": "MIT",
   "author": "Artem Semkin",
   "repository": {
