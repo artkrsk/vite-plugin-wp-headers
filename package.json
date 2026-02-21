@@ -1,6 +1,6 @@
 {
   "name": "@artemsemkin/vite-plugin-wp-headers",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Vite plugin for automatic WordPress header generation during build and dev",
   "license": "MIT",
   "author": "Artem Semkin",
