@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Generic Vite plugin that calls a user-provided `generate()` function at build start and on file changes during dev. No dependency on `@artemsemkin/wp-headers` — composition happens in the consumer's build config.
+Generic Vite plugin that calls a user-provided `generate()` function at build start, at dev server start, and on file changes during dev. No dependency on `@artemsemkin/wp-headers` — composition happens in the consumer's build config.
 
 ## Commands
 

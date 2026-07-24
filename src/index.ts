@@ -1,7 +1,7 @@
 import type { Plugin } from 'vite'
 
 export interface WpHeadersOptions {
-  /** Called on build start and when watched files change */
+  /** Called on build start, dev server start, and when watched files change */
   generate(): void
   /** Absolute paths to watch during dev */
   watch?: string[]
